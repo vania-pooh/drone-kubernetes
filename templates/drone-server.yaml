@@ -1,0 +1,76 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: drone-server
+  labels:
+    app: drone-server
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: drone-server
+        chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+        release: "{{ .Release.Name }}"
+        heritage: "{{ .Release.Service }}"    
+    spec:
+      containers:
+        - image: drone/drone:{{ .Values.drone.version }}
+          imagePullPolicy: IfNotPresent
+          name: drone-server
+          env:
+            - name: DATABASE_DRIVER
+              value: sqlite3
+            - name: DATABASE_CONFIG
+              value: /var/lib/drone/drone.sqlite
+            - name: DRONE_OPEN
+              value: "true"
+            - name: DRONE_HOST
+              value: ci.aerokube.com
+            - name: DRONE_GITHUB
+              value: "true"
+            - name: DRONE_GITHUB_CLIENT
+              valueFrom:
+                secretKeyRef:
+                  name: drone-secrets
+                  key: github-client              
+            - name: DRONE_GITHUB_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: drone-secrets
+                  key: github-secret              
+            - name: DRONE_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: drone-secrets
+                  key: drone-secret              
+          ports:
+            - containerPort: {{ .Values.service.http.internalPort }}
+              protocol: TCP
+            - containerPort: {{ .Values.service.http.grpcPort }}
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /
+              port: {{ .Values.service.http.internalPort }}
+          volumeMounts:
+            - mountPath: /var/lib/drone
+              name: drone-sqlite-db
+            - mountPath: /var/run/docker.sock
+              name: docker-socket
+            - mountPath: /var/lib/docker
+              name: docker-lib
+      volumes:
+        - name: drone-sqlite-db
+          gcePersistentDisk:
+            pdName: {{ .Values.disk.name }}
+            fsType: ext4
+        - name: docker-socket
+          hostPath:
+            path: /var/run/docker.sock
+        - name: docker-lib
+          hostPath:
+            path: /var/lib/docker

@@ -1,0 +1,16 @@
+drone:
+  version: 0.8
+#  secret: my_secret
+  
+disk:
+  name: <gce-storage-disk-name>
+
+github:
+  client: <github-app-client>
+  secret: <github-app-secret>
+
+service:
+  http:
+    externalPort: 80
+    internalPort: 8000
+    grpcPort: 9000

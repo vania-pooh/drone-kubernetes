@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: drone-server
+  labels:
+    app: drone-server
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+spec:
+  type: ClusterIP
+  ports:
+  - name: http
+    port: {{ .Values.service.http.externalPort }}
+    targetPort: {{ .Values.service.http.internalPort }}
+  - name: grpc
+    port: {{ .Values.service.http.grpcPort }}
+    targetPort: {{ .Values.service.http.grpcPort }}
+  selector:
+    app: drone-server
