@@ -7,7 +7,7 @@ This repository contains [Helm](http://github.com/kubernetes/helm) chart for ins
 1. Launch Kubernetes cluster and create a dedicated GCE storage disk for SQLite database.
 2. Create Github OAuth application and get client and secret values.
 3. Clone this repository and edit `values.yaml` - fill Github credentials and GCE storage disk name.
-4. Go to parent directory and install chart with Helm: `$ helm install ./drone`.
+4. Go to parent directory and install chart with Helm: `$ helm install ./drone-kubernetes`.
 
 ## Further Improvements
 
