@@ -29,7 +29,7 @@ spec:
             - name: DRONE_OPEN
               value: "true"
             - name: DRONE_HOST
-              value: ci.aerokube.com
+              value: {{ .Values.service.hostname }}
             - name: DRONE_GITHUB
               value: "true"
             - name: DRONE_GITHUB_CLIENT

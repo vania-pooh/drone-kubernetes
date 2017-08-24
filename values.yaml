@@ -10,6 +10,7 @@ github:
   secret: <github-app-secret>
 
 service:
+  hostname: my-host.example.com
   http:
     externalPort: 80
     internalPort: 8000
